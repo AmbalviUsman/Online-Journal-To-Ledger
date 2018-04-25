@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<link rel="icon" type="image/png" href="assets/img/favicon.ico">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<script src="assets/js/jquery.min.js"></script>
+	<title>Fundamentals of Accounting</title>
+
+	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=device-width" />
+
+
+    <!-- Bootstrap core CSS     -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Animation library for notifications   -->
+    <link href="assets/css/animate.min.css" rel="stylesheet"/>
+
+    <!--  Light Bootstrap Table core CSS    -->
+    <link href="assets/css/light-bootstrap-dashboard.css" rel="stylesheet"/>
+
+
+    <!--  CSS for Demo Purpose, don't include it in your project     -->
+    <link href="assets/css/demo.css" rel="stylesheet" />
+
+
+    <!--     Fonts and icons     -->
+    <link href="assets/fonts/font-awesome.min.css" rel="stylesheet">
+   <link href='assets/fonts/google_fonts.css' rel='stylesheet' type='text/css'>
+    <link href="assets/css/pe-icon-7-stroke.css" rel="stylesheet" />
+	
+	
+<!----------------------------------------------------------------------------------------------------------------------------------- -->
+<script>
+
+var dt=[];
+var dm=[];
+var cm=[];
+var rf=[];
+var dc=[];
+var cc=[];
+var owner;
+var date;
+$(document).ready(function(){
+
+
+ $('#newJournalBtn').attr('disabled','disabled');
+     $('#owner,newJournaldate').keyup(function() {
+	  
+        if($(this).val() != '') {
+           $('#newJournalBtn').removeAttr('disabled');
+        }
+     });
+	 $('#addNewTransactionBtn').attr('disabled','disabled');
+     $('#CAM').keyup(function() {
+	  
+        if($(this).val() != '') {
+           $('#addNewTransactionBtn').removeAttr('disabled');
+        }
+     });
+	   
+
+    $("#addNewJournal").click(function(){
+    $("#addNewJournalForm").toggle();
+	
+});
+
+
+
+ $("#newJournalBtn").click(function(){
+    $("#addNewJournalForm").hide();
+	demo.initChartist();
+
+        	$.notify({
+            	icon: 'pe-7s-info',
+            	message: "New Journal Added!"
+
+            },{
+                type: 'info',
+                timer: 500
+            });
+});
+$("#addNewTransactionBtn").click(function(){
+   
+	demo.initChartist();
+
+        	$.notify({
+            	icon: 'pe-7s-info',
+            	message: "New Transaction Added!"
+
+            },{
+                type: 'info',
+                timer: 500
+            });
+});
+   $(function() { 
+    $('#debit_options').change(function() {
+         $('#DAC').val($(this).val());
+    }).change(); // Trigger the event
+});
+   
+   $(function() { 
+    $('#credit_options').change(function() {
+         $('#CAC').val($(this).val());
+    }).change(); // Trigger the event
+});
+});
+
+
+function addNewJournal()
+{
+	dc=[];
+	dm=[];
+	cm=[];
+	cc=[];
+	transferData();
+	var count = document.getElementById("journalTable").getElementsByTagName("tr").length;
+	var x;	
+	for(x=2;x<count;x++)
+	{
+		document.getElementById("journalTable").deleteRow(2);
+	}
+	owner=document.getElementById("owner").value;
+	date=document.getElementById("newJournaldate").value;
+	document.getElementById("tableTitle").innerHTML=owner;
+	document.getElementById("tableSubTitle").innerHTML=date;
+	
+}
+function addNewTransaction()
+{
+var table = document.getElementById("journalTable");
+var count = document.getElementById("journalTable").getElementsByTagName("tr").length;   
+   var row = table.insertRow(count);
+	
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+	var cell3 = row.insertCell(2);
+    var cell4 = row.insertCell(3);
+	var cell5 = row.insertCell(4);
+    
+    cell1.innerHTML = document.getElementById("date").value;
+    cell2.innerHTML = "<html>"+document.getElementById("DAC").value+"&nbsp;&nbsp;To&nbsp;&nbsp;"+document.getElementById("CAC").value+" </html>";
+	cell3.innerHTML = document.getElementById("RF").value;
+    cell4.innerHTML = document.getElementById("DAM").value;
+	cell5.innerHTML = document.getElementById("CAM").value;
+	dt.push(document.getElementById("date").value);
+	dc.push(document.getElementById("DAC").value);
+	cc.push(document.getElementById("CAC").value);
+	rf.push(document.getElementById("RF").value);
+	dm.push(document.getElementById("DAM").value);
+	cm.push(document.getElementById("CAM").value);
+    
+}
+
+function transferData()
+{
+if (typeof(Storage) !== "undefined") {
+    // Store
+    localStorage.setItem("dt", JSON.stringify(dt));
+	localStorage.setItem("dc", JSON.stringify(dc));
+	localStorage.setItem("cc", JSON.stringify(cc));
+	localStorage.setItem("rf", JSON.stringify(rf));
+	localStorage.setItem("dm", JSON.stringify(dm));
+	localStorage.setItem("cm", JSON.stringify(cm));
+	localStorage.setItem("owner", owner);
+	localStorage.setItem("date", date);
+   
+} else {
+    document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Storage...";
+}
+}
+
+
+
+function getOldData()
+{
+	if (typeof(Storage) !== "undefined")
+	{   
+		dt = JSON.parse(localStorage.getItem("dt"));
+		dm = JSON.parse(localStorage.getItem("dm"));
+		cm = JSON.parse(localStorage.getItem("cm"));
+		rf = JSON.parse(localStorage.getItem("rf"));
+	    dc = JSON.parse(localStorage.getItem("dc"));
+		cc = JSON.parse(localStorage.getItem("cc"));
+		owner=localStorage.getItem("owner");
+		date=localStorage.getItem("date");
+		document.getElementById("tableTitle").innerHTML=owner;
+	document.getElementById("tableSubTitle").innerHTML=date;
+		insertOldData();
+	} else {
+		//document.getElementById("").innerHTML = "Sorry, your browser does not support Web Storage...";
+	}
+}
+
+function insertOldData()
+{
+	
+	var table = document.getElementById("journalTable");
+	var count,x;
+	for(x=0;x<dc.length;x++)
+	{
+		count = document.getElementById("journalTable").getElementsByTagName("tr").length;   
+		var row = table.insertRow(count);
+	
+		var cell1 = row.insertCell(0);
+		var cell2 = row.insertCell(1);
+		var cell3 = row.insertCell(2);
+		var cell4 = row.insertCell(3);
+		var cell5 = row.insertCell(4);
+    
+		cell1.innerHTML = dt[x];
+		cell2.innerHTML = "<html>"+dc[x]+"&nbsp;&nbsp;To&nbsp;&nbsp;"+cc[x]+" </html>";
+		cell3.innerHTML = rf[x];
+		cell4.innerHTML = dm[x];
+		cell5.innerHTML = cm[x];
+	}
+}
+</script>	
+<!----------------------------------------------------------------------------------------------------------------------------------- -->	
+</head>
+<body onload="getOldData();">
+
+<div class="wrapper">
+    <div class="sidebar" data-color="blue" data-image="assets/img/sidebar-4.jpg">
+
+    <!--   you can change the color of the sidebar using: data-color="blue | azure | green | orange | red | purple" -->
+
+
+    	<div class="sidebar-wrapper">
+            <div class="logo">
+                <a href="https://usmanambalvi.000webhostapp.com" class="simple-text">
+                   Usman Ashraf
+                </a>
+            </div>
+
+            <ul class="nav">
+               
+                <li class="active">
+                    <a href="journal.html">
+                        <i class="pe-7s-note2"></i>
+                       <span onclick="transferData();"><p>Journal</p></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="ledger.html">
+                        <i class="pe-7s-note2"></i>
+                         <span onclick="transferData();"><p>Ledger</p></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="trialbalance.html">
+                        <i class="pe-7s-note2"></i>
+                        <span onclick="transferData();"><p>Trial Balance</p></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="dashboard.html">
+                        <i class="pe-7s-graph"></i>
+                        <p>Statistics</p>
+                    </a>
+                </li>
+                
+            </ul>
+    	</div>
+    </div>
+
+    <div class="main-panel">
+        <nav class="navbar navbar-default navbar-fixed">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation-example-2">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Journal</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                   
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                           <a id="addNewJournal" href="#">
+                               New Journal
+                            </a>
+                        </li>
+                       
+                       
+                    </ul>
+                </div>
+            </div>
+        </nav>
+								<form style="display:none;" method="POST" action="addTransaction.php">
+								<input type="text" id="dummy" name="dummy">
+								<input type="submit" id="dummybtn">
+								</form>
+								
+		<div class="content" id="addNewJournalForm"style="margin-bottom:-80px;display:none;">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">New Journal</h4>
+                            </div>
+                            <div class="content">
+                                <form>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Date</label>
+                                                <input type="date" id="newJournaldate" class="form-control" required >
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Owner's name</label>
+                                               <input type="text" id="owner" class="form-control" placeholder="Asfand Yaar" required>
+                                            </div>
+											
+                                        </div>
+	
+                                    </div>
+                                       <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group"  >
+                                                <button type="button"  id="newJournalBtn" style="width:150px;" onclick="addNewJournal();" class="btn btn-info btn-fill ">Add</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                   
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                   
+
+                </div>
+            </div>
+															
+        <div class="content" id="addNewTransactionForm" style="margin-bottom:-80px;">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">New Transaction</h4>
+                            </div>
+                            <div class="content">
+                                <form>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Date</label>
+                                                <input type="date" id="date" class="form-control" required >
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label>Debit Account</label>
+                                                <input type="text" id="DAC" class="form-control" placeholder="Cash" required>
+                                            </div>
+                                        </div>
+										<div class="col-md-1">
+                                            <div class="form-group">
+											<label>&nbsp;</label>
+                                                <select class ="form-control" name="options" id="debit_options">
+													<option value="Capital" selected>Capital</option>
+													<option value="Cash">Cash</option>
+													<option value="Sales">Sales</option>
+                                                    <option value="Purchases">Purchases</option>
+                                                    <option value="A/Payable">A/Payable</option>
+													<option value="A/Receivable">A/Receivable</option>
+													<option value="Drawing">Drawing</option>
+													<option value="Expense">Expense</option>
+													</select>
+                                            </div>
+                                        </div>
+										
+										<div class="col-md-2">
+                                            <div class="form-group">
+                                                <label>Credit Account</label>
+                                                <input type="text" id="CAC" class="form-control" placeholder="A/Payable" required>
+                                            </div>
+                                        </div>
+										<div class="col-md-1">
+                                            <div class="form-group">
+											<label>&nbsp;</label>
+                                                <select class ="form-control" name="options" id="credit_options">
+													<option value="Capital" >Capital</option>
+													<option value="Cash"selected>Cash</option>
+                                                    <option value="Sales">Sales</option>
+                                                    <option value="Purchases">Purchases</option>
+													<option value="A/Payable">A/Payable</option>
+													<option value="A/Receivable">A/Receivable</option>
+													<option value="Drawing">Drawing</option>
+													<option value="Expense">Expense</option>
+													</select>
+                                            </div>
+                                        </div>
+										
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Reference No.</label>
+                                                <input type="text" id="RF" class="form-control" placeholder="1234" required >
+												
+                                            </div>
+                                        </div>
+										
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Debit Amount(Rs)</label>
+                                                <input type="text" id="DAM" class="form-control" placeholder="10000" required>
+                                            </div>
+                                        </div>
+										 <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Credit Amount(Rs)</label>
+                                                <input type="text" id="CAM"class="form-control" placeholder="10000" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                   
+                                   
+                                       <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <button type="button" id="addNewTransactionBtn" onclick="addNewTransaction();"style="width:150px;"class="btn btn-info btn-fill ">Add</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                   
+
+                </div>
+            </div>
+		
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title" id="tableTitle"></h4>
+                                <p class="category" id="tableSubTitle"></p>
+                            </div>
+                            <div class="content table-responsive table-full-width">
+                                <table id="journalTable" class="table table-hover table-striped">
+                                    <thead>
+                                        <th>Date</th>
+                                    	<th>Description</th>
+                                    	<th>Ref</th>
+                                    	<th>Debit Amount</th>
+                                    	<th>Credit Amount</th>
+                                    </thead>
+                                    <tbody>
+                                        
+                                        <tr>
+                                        	<td></td>
+                                        	<td></td>
+                                        	<td></td>
+                                        	<td></td>
+                                        	<td></td>
+                                        </tr>
+										
+                             
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container-fluid">
+                <nav class="pull-left">
+                    <ul>
+                        <li>
+                            <a href="dashboard.html">
+                                Home
+                            </a>
+                        </li>
+                       
+                        <li>
+                            <a href="https://asfand-portfolio.000webhostapp.com/">
+                                Portfolio
+                            </a>
+                        </li>
+                        
+                    </ul>
+                </nav>
+               
+            </div>
+        </footer>
+
+
+    </div>
+</div>
+
+
+</body>
+
+    <!--   Core JS Files   -->
+    <script src="assets/js/jquery-1.10.2.js" type="text/javascript"></script>
+	<script src="assets/js/bootstrap.min.js" type="text/javascript"></script>
+
+	<!--  Checkbox, Radio & Switch Plugins -->
+	<script src="assets/js/bootstrap-checkbox-radio-switch.js"></script>
+
+	<!--  Charts Plugin -->
+	<script src="assets/js/chartist.min.js"></script>
+
+    <!--  Notifications Plugin    -->
+    <script src="assets/js/bootstrap-notify.js"></script>
+
+    <!--  Google Maps Plugin    -->
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
+    <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
+	<script src="assets/js/light-bootstrap-dashboard.js"></script>
+
+	<!-- Light Bootstrap Table DEMO methods, don't include it in your project! -->
+	<script src="assets/js/demo.js"></script>
+
+
+</html>
